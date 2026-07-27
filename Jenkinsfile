@@ -14,21 +14,21 @@ pipeline {
             }
         }
 
-        stage('1. Validate YAML & Convert (Runs on PR & Master)') {
+stage('1. Validate YAML & Convert (Runs on PR & Master)') {
             steps {
                 script {
                     echo "Checking detection file syntax..."
-                    docker.image('python:3.11-slim').inside {
-                        sh '''
-                            pip install --quiet sigma-cli pysigma-backend-splunk
-                            # 1. Lint the YAML files
-                            sigma check ${SIGMA_DIR}
-                            
-                            # 2. Convert to test Splunk SPL
-                            mkdir -p output/
-                            sigma convert -t splunk ${SIGMA_DIR} > output/splunk_queries.spl
-                        '''
-                    }
+                    sh '''
+                        python3 -m pip install --quiet --upgrade pip
+                        pip install --quiet sigma-cli pysigma-backend-splunk
+                        
+                        # 1. Lint the YAML files
+                        sigma check ${SIGMA_DIR}
+                        
+                        # 2. Convert to test Splunk SPL
+                        mkdir -p output/
+                        sigma convert -t splunk ${SIGMA_DIR} > output/splunk_queries.spl
+                    '''
                 }
             }
         }
