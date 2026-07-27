@@ -31,7 +31,7 @@ pipeline {
                         
                         # 4. Convert to test Splunk SPL
                         mkdir -p output/
-                        ./venv/bin/sigma convert -t splunk ${SIGMA_DIR} > output/splunk_queries.spl
+                        ./venv/bin/sigma convert -t splunk --without-pipeline ${SIGMA_DIR} > output/splunk_queries.spl
                     '''
                 }
             }
