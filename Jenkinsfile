@@ -45,13 +45,15 @@ pipeline {
                 script {
                     echo "PR was merged! Deploying rules to Splunk..."
                     withCredentials([string(credentialsId: "${CRED_ID}", variable: 'SPLUNK_TOKEN')]) {
-                        docker.image('python:3.11-slim').inside {
-                            sh '''
-                                pip install --quiet requests pyyaml
-                                python3 - << 'EOF'
+                        sh '''
+                            # Ensure requests and pyyaml are installed in the venv
+                            ./venv/bin/pip install --quiet requests pyyaml
+                            
+                            # Run the deployment script using the virtual environment python
+                            ./venv/bin/python3 - << 'EOF'
 import os, requests, glob, yaml
 
-splunk_url = os.environ['SPLUNK_HOST'] + '/services/saved/searches'
+splunk_url = os.environ.get('SPLUNK_HOST', 'https://localhost:8089') + '/services/saved/searches'
 headers = {'Authorization': f'Bearer {os.environ["SPLUNK_TOKEN"]}'}
 
 for rule_file in glob.glob('rules/*.yml'):
@@ -63,11 +65,12 @@ for rule_file in glob.glob('rules/*.yml'):
     
     payload = {
         'name': f"Detection - {title}",
-        'search': 'index=main sourcetype=windows', // Placeholder search query logic
+        'search': 'index=main sourcetype=windows', 
         'description': description,
         'is_scheduled': '1'
     }
     
+    # Note: verify=False ignores local self-signed SSL certificates for testing
     res = requests.post(splunk_url, data=payload, headers=headers, verify=False)
     if res.status_code in [200, 201]:
         print(f"Successfully deployed to Splunk: {title}")
@@ -75,11 +78,8 @@ for rule_file in glob.glob('rules/*.yml'):
         print(f"Failed to deploy {title}: {res.text}")
         exit(1)
 EOF
-                            '''
-                        }
+                        '''
                     }
                 }
             }
         }
-    }
-}
