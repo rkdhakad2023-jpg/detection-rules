@@ -37,13 +37,17 @@ pipeline {
             }
         }
 
-        stage('2. Deploy to Splunk (Runs ONLY after merge to Master/Main)') {
+      stage('2. Deploy to Splunk (Runs ONLY after merge to Master/Main)') {
             when {
-                branch 'master' // Change to 'main' if your default branch is main
+                anyOf {
+                    branch 'master'
+                    branch 'main'
+                    expression { env.BRANCH_NAME == null || env.BRANCH_NAME == 'master' }
+                }
             }
             steps {
                 script {
-                    echo "PR was merged! Deploying rules to Splunk..."
+                    echo "Deploying rules to Splunk..."
                     withCredentials([string(credentialsId: "${CRED_ID}", variable: 'SPLUNK_TOKEN')]) {
                         sh '''
                             # Ensure requests and pyyaml are installed in the venv
@@ -70,7 +74,6 @@ for rule_file in glob.glob('rules/*.yml'):
         'is_scheduled': '1'
     }
     
-    # Note: verify=False ignores local self-signed SSL certificates for testing
     res = requests.post(splunk_url, data=payload, headers=headers, verify=False)
     if res.status_code in [200, 201]:
         print(f"Successfully deployed to Splunk: {title}")
@@ -83,5 +86,4 @@ EOF
                 }
             }
         }
-    }
 }
