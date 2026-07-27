@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-       stage('1. Validate YAML & Convert (Runs on PR & Master)') {
+        stage('1. Validate YAML & Convert (Runs on PR & Master)') {
             steps {
                 script {
                     echo "Checking detection file syntax..."
@@ -83,3 +83,5 @@ EOF
                 }
             }
         }
+    }
+}
