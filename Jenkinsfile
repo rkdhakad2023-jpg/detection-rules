@@ -59,7 +59,7 @@ import os, requests, glob, yaml
 
 splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
 token = os.environ["SPLUNK_TOKEN"].strip()
-headers = {'Authorization': f'Bearer {token}'}
+headers = {'Authorization': f'Splunk {token}'}
 
 print(f"Connecting to Splunk at: {splunk_url}")
 
