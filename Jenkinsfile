@@ -14,20 +14,24 @@ pipeline {
             }
         }
 
-stage('1. Validate YAML & Convert (Runs on PR & Master)') {
+       stage('1. Validate YAML & Convert (Runs on PR & Master)') {
             steps {
                 script {
                     echo "Checking detection file syntax..."
                     sh '''
-                        python3 -m pip install --quiet --upgrade pip
-                        pip install --quiet sigma-cli pysigma-backend-splunk
+                        # 1. Create a clean virtual environment
+                        python3 -m venv venv
                         
-                        # 1. Lint the YAML files
-                        sigma check ${SIGMA_DIR}
+                        # 2. Install dependencies inside the virtual environment
+                        ./venv/bin/pip install --quiet --upgrade pip
+                        ./venv/bin/pip install --quiet sigma-cli pysigma-backend-splunk
                         
-                        # 2. Convert to test Splunk SPL
+                        # 3. Lint the YAML files using the virtual environment's sigma binary
+                        ./venv/bin/sigma check ${SIGMA_DIR}
+                        
+                        # 4. Convert to test Splunk SPL
                         mkdir -p output/
-                        sigma convert -t splunk ${SIGMA_DIR} > output/splunk_queries.spl
+                        ./venv/bin/sigma convert -t splunk ${SIGMA_DIR} > output/splunk_queries.spl
                     '''
                 }
             }
