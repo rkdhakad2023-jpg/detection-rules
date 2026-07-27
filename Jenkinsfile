@@ -56,10 +56,12 @@ pipeline {
                             # Run the deployment script using the virtual environment python
                             ./venv/bin/python3 - << 'EOF'
 import os, requests, glob, yaml
+from requests.auth import HTTPBasicAuth
 
 splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
-token = os.environ["SPLUNK_TOKEN"].strip()
-headers = {'Authorization': f'Splunk {token}'}
+
+# Use admin username and your password from the credential
+auth = HTTPBasicAuth('admin', os.environ["SPLUNK_TOKEN"].strip())
 
 print(f"Connecting to Splunk at: {splunk_url}")
 
@@ -77,7 +79,7 @@ for rule_file in glob.glob('rules/*.yml'):
         'is_scheduled': '1'
     }
     
-    res = requests.post(splunk_url, data=payload, headers=headers, verify=False)
+    res = requests.post(splunk_url, data=payload, auth=auth, verify=False)
     if res.status_code in [200, 201]:
         print(f"Successfully deployed to Splunk: {title}")
     else:
