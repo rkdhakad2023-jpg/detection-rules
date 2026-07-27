@@ -1,0 +1,12 @@
+title: Suspicious Execution Test
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: test
+description: A test rule for Jenkins validation.
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\cmd.exe'
+    condition: selection
+level: low
