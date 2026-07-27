@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-      stage('2. Deploy to Splunk (Runs ONLY after merge to Master/Main)') {
+        stage('2. Deploy to Splunk (Runs ONLY after merge to Master/Main)') {
             when {
                 anyOf {
                     branch 'master'
@@ -86,4 +86,5 @@ EOF
                 }
             }
         }
+    }
 }
