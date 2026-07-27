@@ -76,7 +76,8 @@ for rule_file in glob.glob('rules/*.yml'):
         'name': f"Detection - {title}",
         'search': 'index=main sourcetype=windows', 
         'description': description,
-        'is_scheduled': '1'
+        'is_scheduled': '1',
+        'cron_schedule': '0 * * * *'
     }
     
     res = requests.post(splunk_url, data=payload, auth=auth, verify=False)
