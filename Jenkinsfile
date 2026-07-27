@@ -57,8 +57,13 @@ pipeline {
                             ./venv/bin/python3 - << 'EOF'
 import os, requests, glob, yaml
 
-splunk_url = os.environ.get('SPLUNK_HOST', 'https://localhost:8089') + '/services/saved/searches'
-headers = {'Authorization': f'Bearer {os.environ["SPLUNK_TOKEN"]}'}
+splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
+
+# Splunk tokens use the Bearer scheme
+token = os.environ["SPLUNK_TOKEN"].strip()
+headers = {'Authorization': f'Bearer {token}'}
+
+print(f"Connecting to Splunk at: {splunk_url}")
 
 for rule_file in glob.glob('rules/*.yml'):
     with open(rule_file, 'r') as rf:
@@ -78,7 +83,7 @@ for rule_file in glob.glob('rules/*.yml'):
     if res.status_code in [200, 201]:
         print(f"Successfully deployed to Splunk: {title}")
     else:
-        print(f"Failed to deploy {title}: {res.text}")
+        print(f"Failed to deploy {title} (Status {res.status_code}): {res.text}")
         exit(1)
 EOF
                         '''
@@ -87,4 +92,3 @@ EOF
             }
         }
     }
-}
