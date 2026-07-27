@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying rules to Splunk..."
-                    withCredentials([string(credentialsId: "${CRED_ID}", variable: 'SPLUNK_TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: "${CRED_ID}", usernameVariable: 'SPLUNK_USER', passwordVariable: 'SPLUNK_PASS')]) {
                         sh '''
                             # Ensure requests and pyyaml are installed in the venv
                             ./venv/bin/pip install --quiet requests pyyaml
@@ -60,8 +60,8 @@ from requests.auth import HTTPBasicAuth
 
 splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
 
-# Use admin username and your password from the credential
-auth = HTTPBasicAuth('admin', os.environ["SPLUNK_TOKEN"].strip())
+# Use Basic Auth with the username and password from Jenkins credentials
+auth = HTTPBasicAuth(os.environ["SPLUNK_USER"], os.environ["SPLUNK_PASS"])
 
 print(f"Connecting to Splunk at: {splunk_url}")
 
@@ -91,5 +91,4 @@ EOF
                 }
             }
         }
-    }
 }
