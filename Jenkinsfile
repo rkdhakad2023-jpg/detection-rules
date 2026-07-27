@@ -58,8 +58,6 @@ pipeline {
 import os, requests, glob, yaml
 
 splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
-
-# Splunk tokens use the Bearer scheme
 token = os.environ["SPLUNK_TOKEN"].strip()
 headers = {'Authorization': f'Bearer {token}'}
 
@@ -92,3 +90,4 @@ EOF
             }
         }
     }
+}
