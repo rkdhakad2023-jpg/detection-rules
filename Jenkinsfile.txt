@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SIGMA_DIR   = 'rules/'
-        SPLUNK_HOST = 'https://http://localhost:8000'
+        SPLUNK_HOST = 'http://localhost:8000'
         CRED_ID     = 'splunk-api-token'
     }
 
