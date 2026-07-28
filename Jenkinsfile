@@ -98,4 +98,25 @@ EOF
             }
         }
     }
+
+    post {
+        success {
+            script {
+                // Reports success status back to GitHub
+                step([$class: 'GitHubCommitStatusSetter', 
+                      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/rkdhakad2023-jpg/detection-rules.git'], 
+                      commitStatusContext: 'continuous-integration/jenkins', 
+                      statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build successful!', state: 'SUCCESS']]]])
+            }
+        }
+        failure {
+            script {
+                // Reports failure status back to GitHub
+                step([$class: 'GitHubCommitStatusSetter', 
+                      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/rkdhakad2023-jpg/detection-rules.git'], 
+                      commitStatusContext: 'continuous-integration/jenkins', 
+                      statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed!', state: 'FAILURE']]]])
+            }
+        }
+    }
 }
