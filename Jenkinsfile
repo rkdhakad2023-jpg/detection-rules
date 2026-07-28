@@ -37,17 +37,23 @@ pipeline {
             }
         }
 
-        stage('2. Deploy to Splunk (Runs ONLY after merge to Master/Main)') {
+        stage('2. Deploy to Splunk (Runs on PR ONLY if rules/ changed)') {
             when {
-                anyOf {
-                    branch 'master'
-                    branch 'main'
-                    expression { env.BRANCH_NAME == null || env.BRANCH_NAME == 'master' }
+                // Ensures it's a Pull Request AND checks if files in 'rules/' were modified
+                allOf {
+                    expression { env.CHANGE_ID != null }
+                    expression {
+                        // Checks git diff between target branch and PR branch for changes in rules/
+                        // Returns true if files under rules/ are modified, false otherwise.
+                        def changedFiles = sh(script: "git diff --name-only origin/${env.CHANGE_TARGET} HEAD", returnStdout: true).trim()
+                        echo "Changed files in this PR:\n${changedFiles}"
+                        return changedFiles.contains('rules/')
+                    }
                 }
             }
             steps {
                 script {
-                    echo "Deploying rules to Splunk..."
+                    echo "Rules folder modified. Deploying rules to Splunk..."
                     withCredentials([usernamePassword(credentialsId: "${CRED_ID}", usernameVariable: 'SPLUNK_USER', passwordVariable: 'SPLUNK_PASS')]) {
                         sh '''
                             # Ensure requests and pyyaml are installed in the venv
@@ -60,7 +66,6 @@ from requests.auth import HTTPBasicAuth
 
 splunk_url = os.environ.get('SPLUNK_HOST', 'https://host.docker.internal:8089') + '/services/saved/searches'
 
-# Use Basic Auth with the username and password from Jenkins credentials
 auth = HTTPBasicAuth(os.environ["SPLUNK_USER"], os.environ["SPLUNK_PASS"])
 
 print(f"Connecting to Splunk at: {splunk_url}")
