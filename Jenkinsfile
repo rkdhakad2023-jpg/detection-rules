@@ -122,8 +122,9 @@ requests.post(comment_url, json={"body": comment_body}, headers=headers)
 print("✅ Success comment posted back to GitHub Pull Request!")
 EOF
                         '''
-                    }
+                  }
                 }
             }
         }
+    } 
 }
