@@ -1,7 +1,7 @@
 title: Suspicious Ping Execution (Testing approval pipeline)
 id: 12345678-1234-1234-1234-123456789012
 status: test
-description: Detects the execution of ping.exe for testing purposes.
+description: Detects ping.exe execution (End-to-End Multibranch Validation Test).
 author: Detection Engineer
 date: 2026-07-29
 logsource:
