@@ -13,4 +13,4 @@ detection:
   condition: selection
 falsepositives:
   - Legitimate administrative activity
-level: low
+level: high
