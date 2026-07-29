@@ -1,4 +1,4 @@
-title: Suspicious Ping Execution (Test Rule)
+title: Suspicious Ping Execution (Testing approval pipeline)
 id: 12345678-1234-1234-1234-123456789012
 status: test
 description: Detects the execution of ping.exe for testing purposes.
