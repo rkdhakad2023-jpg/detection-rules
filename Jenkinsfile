@@ -47,7 +47,7 @@ pipeline {
                     echo "Checking PR Approval Status..."
                     withCredentials([
                         usernamePassword(credentialsId: "${CRED_ID}", usernameVariable: 'SPLUNK_USER', passwordVariable: 'SPLUNK_PASS'),
-                        string(credentialsId: 'rkdhakad2023-jpg', variable: 'GH_TOKEN') // <--- PUT YOUR TOKEN ID HERE
+                        string(credentialsId: 'github-credentials-id', variable: 'GH_TOKEN') // <--- PUT YOUR TOKEN ID HERE
                     ]) {
                         sh '''
                             ./venv/bin/pip install --quiet requests pyyaml
