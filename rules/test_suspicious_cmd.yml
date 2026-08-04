@@ -15,4 +15,4 @@ detection:
     condition: selection
 falsepositives:
     - Administrative maintenance scripts
-level: high
+level: low
