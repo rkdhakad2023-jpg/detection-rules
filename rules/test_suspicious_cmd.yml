@@ -1,0 +1,18 @@
+title: Detect Suspicious Command Prompt Execution
+id: 5f9e83b4-1234-4567-8901-abcdef123456
+status: experimental
+description: Detects execution of cmd.exe running encoded commands or executing from temp folders.
+author: Detection Engineering Team
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\cmd.exe'
+        CommandLine|contains:
+            - '/c start /min'
+            - 'AppData\Local\Temp'
+    condition: selection
+falsepositives:
+    - Administrative maintenance scripts
+level: low
