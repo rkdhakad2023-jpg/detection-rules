@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'Test-DE'}
 
     environment {
         SIGMA_DIR   = 'rules/'
